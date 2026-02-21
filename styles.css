@@ -1,0 +1,73 @@
+body{
+    font-family: "Times New Roman", serif;
+    background-image: url('bild.jpg');
+}
+
+h1 {
+    color: #491c2f;
+}
+
+h2 {
+    color: #1c491c;
+}
+
+p {
+    color: #297897;
+}
+
+ul li{
+    color: rgb(54, 56, 22);
+}
+
+.saturday {
+    color: blue;
+    font-weight: bold;
+}
+
+.sunday {
+    color: red;
+    font-weight: bold;
+}
+
+table { 
+    border-collapse: collapse;  
+    text-align: center;
+    padding: 8px;
+    table-layout: fixed;
+    width: 50%;
+    background-color: beige;
+}
+
+th{
+    background-color: yellowgreen;
+}
+
+th, td {
+    border: 3px solid black;
+    text-align: center;
+    padding: 8px;
+}
+
+.today {
+    background-color: green;
+}
+
+td:hover{
+    background-color: orange;
+    cursor: pointer;
+}
+
+.highlight {
+    color: brown;
+    font-weight: bold;
+}
+
+.another-month {
+    color: gray;
+    opacity: 0.4;
+}
+
+footer {
+    padding: 10px;
+    color: blue;
+}
