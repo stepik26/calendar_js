@@ -48,7 +48,7 @@ th, td {
     padding: 8px;
 }
 
-.today {
+#today {
     background-color: green;
 }
 
