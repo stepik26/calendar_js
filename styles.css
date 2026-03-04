@@ -65,6 +65,7 @@ td:hover{
 .another-month {
     color: gray;
     opacity: 0.4;
+    font-weight: normal;
 }
 
 footer {
