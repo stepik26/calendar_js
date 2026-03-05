@@ -21,12 +21,10 @@ ul li{
 
 .saturday {
     color: blue;
-    font-weight: bold;
 }
 
 .sunday {
     color: red;
-    font-weight: bold;
 }
 
 table { 
@@ -48,8 +46,17 @@ th, td {
     padding: 8px;
 }
 
+td{
+    font-weight: bold;
+}
+
 #today {
     background-color: green;
+}
+
+#monthName, #year1{
+    font-weight: bold;
+    color: darkblue
 }
 
 td:hover{

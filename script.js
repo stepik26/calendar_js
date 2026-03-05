@@ -50,13 +50,11 @@ function renderDay(tr, dayDate) {
   }
 
   // Heutigen Tag markieren
-  if (dayDate.getDate() === today.getDate() && dayDate.getMonth() === monthIndex) {
-    td.id = "today";
-  }
+  if (dayDate.getDate() === today.getDate() && 
+      dayDate.getMonth() === today.getMonth() &&
+      dayDate.getFullYear() === today.getFullYear()) {
 
-  // Feiertag markieren
-  if (isHoliday(dayDate.getDate(), dayDate.getMonth())) {
-    td.classList.add("highlight");
+    td.id = "today";
   }
 
   // Wochenende markieren
@@ -81,7 +79,7 @@ function renderCalendarEnd() {
   document.getElementById("month1").textContent = months[monthIndex];
   document.getElementById("monthName").textContent = months[monthIndex];
   document.getElementById("year").textContent = year;
-  
+  document.getElementById("year1").textContent = year;
 
   // Counter für Woche (erste, zweite ...)
   let counter = counterDays[Math.ceil(today.getDate() / 7) - 1];
@@ -149,9 +147,22 @@ function generateCalendar() {
 //Events
 const button1 = document.getElementById("prevMonth");
 button1.onclick = () => {
-  alert("geklickt");
+    monthIndex--;
+    if (monthIndex < 0){
+      monthIndex = 11;
+      year--;
+    }
+    generateCalendar();
 };
 const button2 = document.getElementById("nextMonth");
+button2.onclick = () => {
+    monthIndex++;
+    if(monthIndex > 11){
+      monthIndex = 0;
+      year++;
+    }
 
+    generateCalendar();
+};
 
 generateCalendar();
