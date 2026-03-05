@@ -1,31 +1,14 @@
-let today = new Date();
-let monthIndex = today.getMonth();
+let today = new Date();          // aktuelles Datum
+let monthIndex = today.getMonth(); // aktueller Monat (0 = Januar)
+let year = today.getFullYear();    // aktuelles Jahr
 
-//Arrays
-const days = [
-  "Sonntag",
-  "Montag",
-  "Dienstag",
-  "Mittwoch",
-  "Donnerstag",
-  "Freitag",
-  "Samstag",
-];
-const months = [
-  "Januar",
-  "Februar",
-  "März",
-  "April",
-  "Mai",
-  "Juni",
-  "Juli",
-  "August",
-  "September",
-  "Oktober",
-  "November",
-  "Dezember",
-];
-const counterDays = ["erste", "zweite", "dritte", "vierte", "fünfte"];
+const days = ["Sonntag","Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag"];
+const months = ["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
+
+// "erste", "zweite" ... für die Woche
+const counterDays = ["erste","zweite","dritte","vierte","fünfte"];
+
+// Feiertage
 const holidays = [
   { month: 0, day: 1, name: "Neujahr" },
   { month: 3, day: 3, name: "Karfreitag" },
@@ -38,132 +21,137 @@ const holidays = [
   { month: 11, day: 26, name: "Zweiter Weihnachstag" },
 ];
 
-//Werte berechnen
-let day = days[today.getDay()];
-let month = months[monthIndex];
-let year = today.getFullYear();
-let counter = counterDays[Math.ceil(today.getDate() / 7) - 1];
-let daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
+function isHoliday(day, month){
+  for (let i=0; i<holidays.length; i++){
+    if (holidays[i].day === day && holidays[i].month === month){
+      return true;
+    }
+  }
+  return false;
+}
 
-//Datum ausgeschrieben
-let fullDate = today.toLocaleDateString("de-DE", {
-  day: "numeric",
-  month: "long",
-  year: "numeric",
-});
-document.title = "Kalenderblatt vom " + fullDate;
+function renderCalendarStart() {
+  document.querySelector("#calendar tbody").innerHTML = ""; // Tabelle leeren
+}
 
-//Elemente füllen
-document.getElementById("date").textContent = fullDate;
-document.getElementById("dateText").textContent = fullDate;
-document.getElementById("weekday").textContent = day;
-document.getElementById("counter").textContent = counter;
-document.getElementById("weekday1").textContent = day;
-document.getElementById("month").textContent = month;
-document.getElementById("month1").textContent = month;
-document.getElementById("daysInMonth").textContent = daysInMonth;
-document.getElementById("year").textContent = year;
+function renderWeekStart() {
+  const tr = document.createElement("tr");
+  document.querySelector("#calendar tbody").appendChild(tr);
+  return tr; 
+}
 
-//Aktuellen Tag markieren
-let cells = document.querySelectorAll("td");
+function renderDay(tr, dayDate) {
+  const td = document.createElement("td");
+  td.textContent = dayDate.getDate();
 
-// for (let i = 0; i < cells.length; i++) {
-//   let cell = cells[i];
+  // Tage vom anderen Monat hellgrau machen
+  if (dayDate.getMonth() !== monthIndex) {
+    td.classList.add("another-month");
+  }
 
-//   if (!cell.classList.contains("another-month")) {
-//     let cellNumber = parseInt(cell.textContent);
+  // Heutigen Tag markieren
+  if (dayDate.getDate() === today.getDate() && dayDate.getMonth() === monthIndex) {
+    td.id = "today";
+  }
 
-//     if (cellNumber === today.getDate()) {
-//       cell.id = "today";
-//     }
-//   }
-// }
+  // Feiertag markieren
+  if (isHoliday(dayDate.getDate(), dayDate.getMonth())) {
+    td.classList.add("highlight");
+  }
 
-//Tag des Jahres
-let start = new Date(year, 0, 0);
-let diff = today - start;
-let oneDay = 1000 * 60 * 60 * 24;
-let dayOfYear = Math.floor(diff / oneDay);
-document.getElementById("dayOfYear").textContent = dayOfYear;
+  // Wochenende markieren
+  const weekday = dayDate.getDay();
+  if (weekday === 0) td.classList.add("sunday");
+  if (weekday === 6) td.classList.add("saturday");
 
-//Tage bis Jahresende
-let end = new Date(year, 11, 31);
-let diffEnd = end - today;
-let daysLeft = Math.ceil(diffEnd / oneDay);
-document.getElementById("daysLeft").textContent = daysLeft;
+  tr.appendChild(td);
+}
 
-//Feiertage
-let holiday = holidays.find(
-  (f) => f.day == today.getDate() && f.month == monthIndex,
-);
-document.getElementById("holiday").textContent = holiday ? "ein" : "kein";
+function renderCalendarEnd() {
+  // Datum ausgeschrieben
+  let fullDate = today.toLocaleDateString("de-DE", { day:"numeric", month:"long", year:"numeric" });
+  document.title = "Kalenderblatt vom " + fullDate;
+  document.getElementById("date").textContent = fullDate;
+  document.getElementById("dateText").textContent = fullDate;
+
+  // Wochentag, Monat, Jahr
+  document.getElementById("weekday").textContent = days[today.getDay()];
+  document.getElementById("weekday1").textContent = days[today.getDay()];
+  document.getElementById("month").textContent = months[monthIndex];
+  document.getElementById("month1").textContent = months[monthIndex];
+  document.getElementById("monthName").textContent = months[monthIndex];
+  document.getElementById("year").textContent = year;
+  
+
+  // Counter für Woche (erste, zweite ...)
+  let counter = counterDays[Math.ceil(today.getDate() / 7) - 1];
+  document.getElementById("counter").textContent = counter;
+
+  // Tage im Monat
+  let daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
+  document.getElementById("daysInMonth").textContent = daysInMonth;
+
+  // Tag des Jahres
+  let start = new Date(year, 0, 0);
+  let diff = today - start;
+  let oneDay = 1000*60*60*24;
+  let dayOfYear = Math.floor(diff / oneDay);
+  document.getElementById("dayOfYear").textContent = dayOfYear;
+
+  // Tage bis Jahresende
+  let end = new Date(year, 11, 31);
+  let diffEnd = end - today;
+  let daysLeft = Math.ceil(diffEnd / oneDay);
+  document.getElementById("daysLeft").textContent = daysLeft;
+
+  // Feiertag heute
+  let holiday = isHoliday(today.getDate(), monthIndex);
+  document.getElementById("holiday").textContent = holiday ? "ein" : "kein";
+}
 
 function generateCalendar() {
-  const tbody = document.querySelector("#calendar tbody");
-  tbody.innerHTML = "";
+  renderCalendarStart();
 
-  const firstDay = new Date(year, monthIndex, 1);
-  const lastDay = new Date(year, monthIndex + 1, 0);
+  const firstDay = new Date(year, monthIndex, 1); // Erster Tag des Monats
+  const lastDay = new Date(year, monthIndex + 1, 0); // monthIndex + 1 = nächster Monat, Tag 0 = letzter Tag des aktuellen Monats
   let daysInMonth = lastDay.getDate();
 
-  // Starttag der Woche (0=So … 6=Sa)
-  let startDay = firstDay.getDay();
-  startDay = startDay === 0 ? 6 : startDay - 1; // Montag = 0 … Sonntag = 6
+  let startDay = firstDay.getDay(); // am welchen Wochentag beginnt der Monat
+  startDay = startDay === 0 ? 6 : startDay - 1; // Damit die Woche am Montag anfängt
 
-  // Letzter Tag des Vormonats
-  let prevMonthLastDay = new Date(year, monthIndex, 0).getDate();
+  const prevMonthLastDay = new Date(year, monthIndex, 0).getDate();
+  let dayCounter = 1 - startDay;
 
-  let dayCounter = 1;
-
-  for (let row = 0; row < 6; row++) {
-    let tr = document.createElement("tr");
+  for (let row = 0; row <= 5; row++) {
+    let tr = renderWeekStart();
 
     for (let col = 0; col < 7; col++) {
-      let td = document.createElement("td");
-      let cellDate;
+      let dayDate;
 
-      if (row === 0 && col < startDay) {
-        // Tage vom Vormonat
-        let prevDay = prevMonthLastDay - startDay + col + 1;
-        td.textContent = prevDay;
-        td.classList.add("another-month");
-        cellDate = new Date(year, monthIndex - 1, prevDay);
-      } else if (dayCounter > daysInMonth) {
-        // Tage vom nächsten Monat
-        let nextDay = dayCounter - daysInMonth;
-        td.textContent = nextDay;
-        td.classList.add("another-month");
-        cellDate = new Date(year, monthIndex + 1, nextDay);
-        dayCounter++;
-      } else {
-        // Tage vom aktuellen Monat
-        td.textContent = dayCounter;
-        cellDate = new Date(year, monthIndex, dayCounter);
-
-        // Heutiger Tag
-        if (dayCounter === today.getDate()) {
-          td.id = "today";
-        }
-
-        // Feiertage markieren
-        let isHoliday = holidays.find(
-          (f) => f.day === dayCounter && f.month === monthIndex
-        );
-        if (isHoliday) td.classList.add("highlight");
-
-        dayCounter++;
+      if (dayCounter <= 0) {
+        dayDate = new Date(year, monthIndex - 1, prevMonthLastDay + dayCounter); // Vormonat
+      } 
+      else if (dayCounter > daysInMonth) {
+        dayDate = new Date(year, monthIndex + 1, dayCounter - daysInMonth); // nächster Monat
+      } 
+      else {
+        dayDate = new Date(year, monthIndex, dayCounter); // aktueller Monat
       }
 
-      // Samstag/Sonntag korrekt färben
-      let weekday = cellDate.getDay(); // 0=So … 6=Sa
-      if (weekday === 6) td.classList.add("saturday"); // Samstag
-      if (weekday === 0) td.classList.add("sunday");   // Sonntag
-
-      tr.appendChild(td);
+      renderDay(tr, dayDate);
+      dayCounter++;
     }
-
-    tbody.appendChild(tr);
   }
+
+  renderCalendarEnd(); // Textinfos setzen
 }
+
+//Events
+const button1 = document.getElementById("prevMonth");
+button1.onclick = () => {
+  alert("geklickt");
+};
+const button2 = document.getElementById("nextMonth");
+
 
 generateCalendar();
